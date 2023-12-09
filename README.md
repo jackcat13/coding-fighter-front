@@ -1,6 +1,6 @@
 # Rust + Rocket frontend for **Coding Fighters** online game
 
-Code coverage : [![codecov](https://codecov.io/gh/jackcat13/coding-fighters-front/graph/badge.svg?token=THICOWJP1O)](https://codecov.io/gh/jackcat13/coding-fighters-front)
+Code coverage : [![codecov](https://codecov.io/gh/jackcat13/coding-fighter-front/graph/badge.svg?token=U1TGTJGNVW)](https://codecov.io/gh/jackcat13/coding-fighter-front)
 
 ## Purpose
 
