@@ -2,6 +2,7 @@ FROM rust:latest as builder
 
 RUN rustup target add wasm32-unknown-unknown
 RUN cargo install trunk wasm-bindgen-cli
+RUN apt update -y && apt install -y npm
 
 COPY . .
 RUN trunk build --release

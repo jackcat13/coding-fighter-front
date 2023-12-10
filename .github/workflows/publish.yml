@@ -47,4 +47,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
+            docker service rm $(docker service ls -q)
             docker stack deploy -c docker-compose.yml coding-fighters
