@@ -9,7 +9,7 @@ use web_sys::SubmitEvent;
 use yew::{function_component, html, use_state, Callback, Html, NodeRef, UseStateHandle};
 use yew_router::prelude::use_navigator;
 
-pub(crate) const GUEST_NAME: &str = "guestName";
+pub const GUEST_NAME: &str = "guestName";
 
 #[derive(Validate, Debug, Default, Clone, Serialize, Deserialize)]
 struct LoginUserSchema {

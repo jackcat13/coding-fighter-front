@@ -1,7 +1,11 @@
+mod client;
 mod components;
+mod dto;
 mod helpers;
+mod model;
 
 use crate::helpers::local_storage::local_storage;
+use components::create_game_component::CreateGameComponent;
 use components::game_hub_component::GameHubComponent;
 use components::login_component::LoginComponent;
 use components::social_media_components::*;
@@ -18,6 +22,8 @@ pub enum Route {
     #[not_found]
     #[at("/404")]
     NotFound,
+    #[at("/game")]
+    Game,
 }
 
 fn home() -> Html {
@@ -25,6 +31,16 @@ fn home() -> Html {
         <>
             {header()}
             <GameHubComponent />
+            {footer()}
+        </>
+    }
+}
+
+fn game() -> Html {
+    html! {
+        <>
+            {header()}
+            <CreateGameComponent />
             {footer()}
         </>
     }
@@ -81,6 +97,7 @@ fn switch(routes: Route) -> Html {
         Some(_) => match routes {
             Route::Home => home(),
             Route::NotFound => not_found(),
+            Route::Game => game(),
         },
         None => login(),
     }

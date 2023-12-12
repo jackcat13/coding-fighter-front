@@ -32,6 +32,7 @@ pub fn form_input_component(props: &Props) -> Html {
         {props.label.clone()}
       </label>
       <input
+        id={props.name.clone()}
         type={input_type}
         placeholder=""
         class="block w-full rounded-2xl appearance-none focus:outline-none py-2 px-4"

@@ -1,4 +1,5 @@
 pub mod button_components;
+pub mod create_game_component;
 pub mod form_input;
 pub mod game_hub_component;
 pub mod loading_button_component;
