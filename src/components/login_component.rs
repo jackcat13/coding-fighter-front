@@ -63,7 +63,7 @@ pub fn login_component() -> Html {
                 <h1 class="text-4xl xl:text-6xl text-center font-[600] text-orange-600 mb-4">
                   {"Welcome to the Coding Fighters game."}
                 </h1>
-                <form onsubmit={on_submit} class="max-w-md w-full mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-1">
+                <form onsubmit={on_submit} class="max-w-md w-full mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-1 text-slate-500">
                     <FormInput input_type="input" label="Please choose a guest name" name={GUEST_NAME} input_ref={guest_name_ref} handle_onchange={handle_guest_name_input} error={&*guest_name_error} />
                     <LoadingButton
                       loading=false

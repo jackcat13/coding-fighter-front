@@ -17,7 +17,7 @@ pub fn logout_component() -> Html {
         })
     };
     html! {
-        <form onsubmit={on_submit} class="max-w-md w-full mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-5">
+        <form onsubmit={on_submit} class="max-w-md w-full mx-auto overflow-hidden">
             <LoadingButton
               loading=false
               btn_color={Some("bg-orange-600".to_string())}

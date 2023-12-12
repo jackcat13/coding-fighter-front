@@ -2,8 +2,9 @@ mod components;
 mod helpers;
 
 use crate::helpers::local_storage::local_storage;
+use components::game_hub_component::GameHubComponent;
 use components::login_component::LoginComponent;
-use components::logout_component::LogoutComponent;
+use components::social_media_components::*;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -20,22 +21,43 @@ pub enum Route {
 }
 
 fn home() -> Html {
-    let local_storage = local_storage();
-    let user = local_storage.get_item(USER_SESSION).unwrap();
     html! {
         <>
-            <h1>{"Hello "}{user}</h1>
-            <LogoutComponent />
+            {header()}
+            <GameHubComponent />
             {footer()}
+        </>
+    }
+}
+
+fn header() -> Html {
+    let local_storage = local_storage();
+    let user = local_storage
+        .get_item(USER_SESSION)
+        .expect("Failed to load user from storage");
+    //TODO proper profile panel
+    html! {
+        <>
+            <div class="absolute top-0 right-0 m-5">
+                {"Welcome "}{user}
+            </div>
         </>
     }
 }
 
 fn footer() -> Html {
     html! {
-        <footer class="footer"><div>
-
-        </div></footer>
+        <>
+            <div class="sticky bottom-0 w-full">
+                <div class="px-8 place-items-center flex justify-center">
+                    <p>{"Join my social networks :"}</p>
+                    <DiscordButton />
+                    <GithubButton />
+                    <LinkedinButton />
+                    <YoutubeButton />
+                </div>
+            </div>
+        </>
     }
 }
 
@@ -47,6 +69,7 @@ fn login() -> Html {
     html! {
         <>
             <LoginComponent />
+            {footer()}
         </>
     }
 }
