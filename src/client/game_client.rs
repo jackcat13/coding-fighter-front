@@ -1,17 +1,20 @@
 use crate::dto::game_dto::GameDto;
 use reqwest::Response;
-use std::env;
 use std::ops::Add;
-
-const GAME_API: &str = "GAME_API";
+extern crate dotenv;
+use dotenv::dotenv;
 
 pub struct GameClient {
     url: String,
 }
 
+#[allow(clippy::option_env_unwrap)]
 impl GameClient {
     pub fn init() -> Self {
-        let url = env::var(GAME_API).expect("Failed to load backend URL");
+        dotenv().ok();
+        let url = option_env!("GAME_API")
+            .expect("Failed to load backend URL")
+            .to_string();
         GameClient { url }
     }
 

@@ -9,5 +9,7 @@ RUN trunk build --release
 
 FROM nginx:1.21-alpine
 
+ENV GAME_API="coding-fighters-backend"
+
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder dist/ /usr/share/nginx/html/

@@ -6,4 +6,5 @@ pub struct GameDto {
     pub id: Option<String>,
     pub topics: Vec<String>,
     pub question_number: String,
+    pub is_private: bool,
 }
