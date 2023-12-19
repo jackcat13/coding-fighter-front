@@ -2,6 +2,7 @@ use crate::dto::game_dto::GameDto;
 use std::ops::Add;
 extern crate dotenv;
 use dotenv::dotenv;
+use dotenv_codegen::dotenv;
 
 pub struct GameClient {
     url: String,
@@ -11,9 +12,7 @@ pub struct GameClient {
 impl GameClient {
     pub fn init() -> Self {
         dotenv().ok();
-        let url = option_env!("GAME_API")
-            .expect("Failed to load backend URL")
-            .to_string();
+        let url = dotenv!("GAME_API").to_string();
         GameClient { url }
     }
 
