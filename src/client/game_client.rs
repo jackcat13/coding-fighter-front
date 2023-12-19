@@ -25,4 +25,13 @@ impl GameClient {
         let game_created: GameDto = res.json().await.expect("Failed to parse created game");
         game_created
     }
+
+    pub async fn get_games(&self) -> Vec<GameDto> {
+        let get_all_url = self.url.clone().add("/games");
+        let client = reqwest::Client::new();
+        let res = client.get(get_all_url).send().await;
+        let res = res.expect("Failed to get result from get all games client");
+        let games: Vec<GameDto> = res.json().await.expect("Failed to parse fetched games");
+        games
+    }
 }
