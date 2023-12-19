@@ -4,6 +4,8 @@ use crate::components::loading_button_component::LoadingButton;
 use crate::dto::game_dto::GameDto;
 use crate::helpers::local_storage::local_storage;
 use crate::model::game::*;
+use crate::use_navigator;
+use crate::Route;
 use gloo::utils::document;
 use js_sys::Object;
 use serde_json::to_string;
@@ -15,18 +17,20 @@ use yew::{function_component, html, use_state, Callback, Html, NodeRef, UseState
 #[function_component(CreateGameComponent)]
 pub fn create_game_component() -> Html {
     let storage = local_storage();
-    //let navigator = use_navigator().expect("Failed to load navigator");
+    let navigator = use_navigator().expect("Failed to load navigator");
     let form = use_state(GameSchema::default);
+    let is_loading = use_state(|| false);
     let game_question_number_error = use_state(|| "");
     let game_question_number_ref = NodeRef::default();
     let handle_game_question_number_input = get_question_number_callback(form.clone());
     let on_submit = {
         let form = form.clone();
         let data = form.deref().clone();
-        //let game_topics = data.topics.clone();
-        //let game_question_number = data.question_number.clone();
+        let is_loading = is_loading.clone();
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
+            is_loading.set(true);
+            let navigator = navigator.clone();
             let storage = storage.clone();
             let document = document();
             let topics_node = document.get_elements_by_name(GAME_TOPICS);
@@ -49,12 +53,6 @@ pub fn create_game_component() -> Html {
                     .expect("Failed to get js value"),
             )
             .checked();
-            gloo::console::log!("DATA :");
-            gloo::console::log!(format!("{:?}", topics_node));
-            gloo::console::log!(format!("{:?}", topics_array));
-            gloo::console::log!(format!("{:?}", topics_html));
-            gloo::console::log!(format!("{:?}", topics));
-            gloo::console::log!(format!("{:?}", is_private));
             let client = GameClient::init();
             let game_dto = GameDto {
                 id: None,
@@ -64,12 +62,19 @@ pub fn create_game_component() -> Html {
             };
             wasm_bindgen_futures::spawn_local(async move {
                 gloo::console::log!("Calling the client to create game");
-                client.create_game(game_dto.clone()).await;
+                let game_created = client.create_game(game_dto.clone()).await;
                 storage
-                    .set_item(CURRENT_GAME, to_string(&game_dto).unwrap().as_str())
+                    .set_item(
+                        CURRENT_GAME,
+                        to_string(&game_created.clone()).unwrap().as_str(),
+                    )
                     .expect("Failed to store current game info");
+                navigator.push(&Route::JoinGame {
+                    id: game_created
+                        .id
+                        .expect("Failed to resolve id of created game"),
+                });
             });
-            //navigator.push(&Route::);
         })
     };
     html! {
@@ -99,7 +104,7 @@ pub fn create_game_component() -> Html {
                                 </div>
                         </fieldset>
                         <LoadingButton
-                          loading=false
+                          loading={&*is_loading}
                           btn_color={Some("bg-orange-600".to_string())}
                           text_color={Some("text-sky-950".to_string())}
                         >

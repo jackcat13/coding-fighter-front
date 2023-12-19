@@ -1,5 +1,4 @@
 use crate::dto::game_dto::GameDto;
-use reqwest::Response;
 use std::ops::Add;
 extern crate dotenv;
 use dotenv::dotenv;
@@ -18,10 +17,12 @@ impl GameClient {
         GameClient { url }
     }
 
-    pub async fn create_game(&self, game: GameDto) -> Response {
+    pub async fn create_game(&self, game: GameDto) -> GameDto {
         let create_url = self.url.clone().add("/game");
         let client = reqwest::Client::new();
         let res = client.post(create_url).json(&game).send().await;
-        res.expect("Failed to get result from create game client")
+        let res = res.expect("Failed to get result from create game client");
+        let game_created: GameDto = res.json().await.expect("Failed to parse created game");
+        game_created
     }
 }

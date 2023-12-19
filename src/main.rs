@@ -4,6 +4,7 @@ mod dto;
 mod helpers;
 mod model;
 
+use crate::components::join_game_component::JoinGameComponent;
 use crate::helpers::local_storage::local_storage;
 use components::create_game_component::CreateGameComponent;
 use components::game_hub_component::GameHubComponent;
@@ -24,6 +25,8 @@ pub enum Route {
     NotFound,
     #[at("/game")]
     Game,
+    #[at("/join-game/:id")]
+    JoinGame { id: String },
 }
 
 fn home() -> Html {
@@ -41,6 +44,16 @@ fn game() -> Html {
         <>
             {header()}
             <CreateGameComponent />
+            {footer()}
+        </>
+    }
+}
+
+fn join_game(id: String) -> Html {
+    html! {
+        <>
+            {header()}
+            <JoinGameComponent game_id={id} />
             {footer()}
         </>
     }
@@ -98,6 +111,7 @@ fn switch(routes: Route) -> Html {
             Route::Home => home(),
             Route::NotFound => not_found(),
             Route::Game => game(),
+            Route::JoinGame { id } => join_game(id),
         },
         None => login(),
     }
