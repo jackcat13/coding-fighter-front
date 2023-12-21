@@ -23,7 +23,6 @@ pub fn join_game_component(props: &Props) -> Html {
     let game_async = game.clone();
     let game_id = props.game_id.clone();
     wasm_bindgen_futures::spawn_local(async move {
-        gloo::console::log!("Calling the client to get game by id");
         let client = GameClient::init();
         let game_fetched = client.get_game(game_id).await;
         match game_fetched {
@@ -33,7 +32,6 @@ pub fn join_game_component(props: &Props) -> Html {
                     .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
                     .expect("Failed to store current game info");
                 game_async.set(Some(game));
-                gloo::console::log!("Game found !");
             }
         }
     });
