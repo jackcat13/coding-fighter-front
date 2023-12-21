@@ -7,6 +7,7 @@ pub const GAME_QUESTION_NUMBER: &str = "gameQuestionNumber";
 pub const GAME_PRIVATE: &str = "gamePrivate";
 pub const AVAILABLE_TOPICS: [&str; 3] = ["Rust", "Java", "Kotlin"];
 
+///GameSchema is used to validate the game creation form
 #[derive(Validate, Debug, Default, Clone, Serialize, Deserialize)]
 pub struct GameSchema {
     pub id: Option<String>,

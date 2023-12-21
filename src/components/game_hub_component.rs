@@ -5,6 +5,10 @@ use crate::Route;
 use yew::{function_component, html, use_state, Callback, Html};
 use yew_router::prelude::{use_navigator, Navigator};
 
+/// The game hub component implementation.
+/// It's a page with two buttons: one to join a game and one to create a game.
+/// Join game button shows the number of games available.
+/// Create game button redirects user to the [CreateGameComponent](crate::components::create_game_component::CreateGameComponent).
 #[function_component(GameHubComponent)]
 pub fn game_hub_component() -> Html {
     let navigator = use_navigator().expect("Failed to load navigator");

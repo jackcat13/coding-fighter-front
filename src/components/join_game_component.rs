@@ -11,6 +11,10 @@ pub struct Props {
     pub game_id: String,
 }
 
+/// The join game component implementation.
+/// It's a page that will call the [GameClient](crate::client::game_client::GameClient) to get a game by id to validate existence of the game.
+/// Details of the game will be displayed.
+/// Game may be started by the game owner if enough players are connected.
 #[function_component(JoinGameComponent)]
 pub fn join_game_component(props: &Props) -> Html {
     let location = window().location();

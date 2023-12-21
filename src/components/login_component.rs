@@ -11,6 +11,9 @@ use yew_router::prelude::use_navigator;
 
 pub const GUEST_NAME: &str = "guestName";
 
+/// Login inputs.
+/// Only guest name is required because we don't want to store user data for simplification reasons.
+/// In case of any improvement, integration of authentication system based on Google, GitHub or any other third party will be considered.
 #[derive(Validate, Debug, Default, Clone, Serialize, Deserialize)]
 struct LoginUserSchema {
     #[validate(length(min = 1, message = "Guest name is required"))]
@@ -30,6 +33,8 @@ fn get_input_callback(
     })
 }
 
+/// The login component implementation
+/// It's a form with a single input for guest name.
 #[function_component(LoginComponent)]
 pub fn login_component() -> Html {
     let navigator = use_navigator().unwrap();

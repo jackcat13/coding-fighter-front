@@ -8,6 +8,8 @@ pub struct GameClient {
     url: String,
 }
 
+/// Client to interact with the game backend
+/// It provides methods to create, get all and get a game by id
 #[allow(clippy::option_env_unwrap)]
 impl GameClient {
     pub fn init() -> Self {

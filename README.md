@@ -1,6 +1,6 @@
 # Rust + Rocket frontend for **Coding Fighters** online game
 
-Code coverage : [![codecov](https://codecov.io/gh/jackcat13/coding-fighter-front/graph/badge.svg?token=U1TGTJGNVW)](https://codecov.io/gh/jackcat13/coding-fighter-front)
+Code coverage : [![codecov](https://codecov.io/gh/jackcat13/coding-fighter-front/graph/badge.svg?token=U1TGTJGNVW)](https://codecov.io/gh/jackcat13/coding-fighter-front) (Following ticket would allow to implement automated tests : [yew#196](https://github.com/yewstack/yew/issues/196). Yew has still no major version, so it's not implemented yet)
 
 ## Purpose
 

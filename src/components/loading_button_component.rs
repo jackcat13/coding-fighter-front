@@ -9,6 +9,8 @@ pub struct Props {
     pub children: Children,
 }
 
+/// The loading button component implementation.
+/// It's a button with a spinner and a text. The spinner is shown when the loading property is true. See [Spinner](crate::components::sprinner_component::Spinner) component.
 #[function_component(LoadingButton)]
 pub fn loading_button_component(props: &Props) -> Html {
     let text_color = props

@@ -12,6 +12,8 @@ pub struct Props {
     pub error: &'static str,
 }
 
+/// The form input component implementation.
+/// It's a form input with a label and an error message for validation purpose.
 #[function_component(FormInput)]
 pub fn form_input_component(props: &Props) -> Html {
     let input_type = props

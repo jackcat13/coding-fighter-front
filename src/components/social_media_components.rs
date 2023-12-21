@@ -1,5 +1,6 @@
 use yew::{function_component, html, Html};
 
+/// The discord button to redirect to the discord server of coding fighters comunity.
 #[function_component(DiscordButton)]
 pub fn discord_button_component() -> Html {
     html! {
@@ -27,6 +28,7 @@ pub fn discord_button_component() -> Html {
     }
 }
 
+/// The github button to redirect to github profile of the project owner.
 #[function_component(GithubButton)]
 pub fn github_button_component() -> Html {
     html! {
@@ -52,6 +54,7 @@ pub fn github_button_component() -> Html {
     }
 }
 
+/// The LinkedIn button to redirect to linkedin profile of the project owner.
 #[function_component(LinkedinButton)]
 pub fn linkedin_button_component() -> Html {
     html! {
@@ -77,6 +80,7 @@ pub fn linkedin_button_component() -> Html {
     }
 }
 
+/// The Youtube button to redirect to youtube channel of the project owner.
 #[function_component(YoutubeButton)]
 pub fn youtube_button_component() -> Html {
     html! {

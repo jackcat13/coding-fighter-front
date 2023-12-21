@@ -1,5 +1,6 @@
 use yew::prelude::*;
 
+/// The spinner loading animation to be used when any background process is running.
 #[function_component(Spinner)]
 pub fn spinner_component() -> Html {
     let width = "1.25rem".to_string();

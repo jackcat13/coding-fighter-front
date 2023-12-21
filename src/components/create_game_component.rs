@@ -14,6 +14,9 @@ use wasm_bindgen::__rt::IntoJsResult;
 use web_sys::{HtmlInputElement, SubmitEvent};
 use yew::{function_component, html, use_state, Callback, Html, NodeRef, UseStateHandle};
 
+/// The create game component implementation.
+/// It's a form with input fields correspoding to the [Game](crate::model::game::Game) model.
+/// When clicking, the form will call the [GameClient](crate::client::game_client::GameClient) to create a game and will redirects user to the [JoinGameComponent](crate::components::join_game_component::JoinGameComponent).
 #[function_component(CreateGameComponent)]
 pub fn create_game_component() -> Html {
     let storage = local_storage();

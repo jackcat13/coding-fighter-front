@@ -6,6 +6,8 @@ pub struct CounterProps {
     pub counter: UseStateHandle<u8>,
 }
 
+/// The counter button component implementation.
+/// It's a button with a counter that appears on the top right of the button.
 #[function_component(CounterButton)]
 pub fn counter_button_component(props: &CounterProps) -> Html {
     html! {

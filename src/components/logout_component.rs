@@ -5,6 +5,8 @@ use web_sys::SubmitEvent;
 use yew::{function_component, html, Callback, Html};
 use yew_router::prelude::use_navigator;
 
+/// The logout component implementation.
+/// It's a form with a single button to logout.
 #[function_component(LogoutComponent)]
 pub fn logout_component() -> Html {
     let navigator = use_navigator().unwrap();
