@@ -12,6 +12,6 @@ pub struct GameSchema {
     pub id: Option<String>,
     #[validate(length(min = 1, message = "At least one topic is required."))]
     pub topics: Vec<String>,
-    pub question_number: String,
+    pub question_number: i8,
     pub is_private: bool,
 }

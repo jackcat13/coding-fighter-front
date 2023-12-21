@@ -96,7 +96,7 @@ pub fn create_game_component() -> Html {
                              }
                             ).collect::<Html>() }
                         </fieldset>
-                        <FormInput input_type="input" label="Number of questions" name={GAME_QUESTION_NUMBER} input_ref={game_question_number_ref} handle_onchange={handle_game_question_number_input} error={&*game_question_number_error} />
+                        <FormInput input_type="number" label="Number of questions" name={GAME_QUESTION_NUMBER} input_ref={game_question_number_ref} handle_onchange={handle_game_question_number_input} error={&*game_question_number_error} />
                         <fieldset>
                             <legend>{"Private ? (share link to join)"}</legend>
                                 <div>
@@ -120,7 +120,10 @@ pub fn create_game_component() -> Html {
 fn get_question_number_callback(cloned_form: UseStateHandle<GameSchema>) -> Callback<String> {
     Callback::from(move |value: String| {
         let mut data = cloned_form.deref().clone();
-        data.question_number = value.to_string();
+        data.question_number = value
+            .to_string()
+            .parse()
+            .expect("Failed to parse question number to int");
         cloned_form.set(data);
     })
 }
