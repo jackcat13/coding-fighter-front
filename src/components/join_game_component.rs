@@ -22,18 +22,20 @@ pub fn join_game_component(props: &Props) -> Html {
     let game = use_state(|| None);
     let game_async = game.clone();
     let game_id = props.game_id.clone();
-    wasm_bindgen_futures::spawn_local(async move {
-        let client = GameClient::init();
-        let game_fetched = client.get_game(game_id).await;
-        match game_fetched {
-            None => {}
-            Some(game) => {
-                storage
-                    .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
-                    .expect("Failed to store current game info");
-                game_async.set(Some(game));
+    use_state(move || {
+        wasm_bindgen_futures::spawn_local(async move {
+            let client = GameClient::init();
+            let game_fetched = client.get_game(game_id).await;
+            match game_fetched {
+                None => {}
+                Some(game) => {
+                    storage
+                        .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
+                        .expect("Failed to store current game info");
+                    game_async.set(Some(game));
+                }
             }
-        }
+        });
     });
     html! {
         <>

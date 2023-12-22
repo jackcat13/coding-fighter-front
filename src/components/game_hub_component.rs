@@ -14,9 +14,11 @@ pub fn game_hub_component() -> Html {
     let navigator = use_navigator().expect("Failed to load navigator");
     let game_count = use_state(|| 0);
     let game_count_clone = game_count.clone();
-    wasm_bindgen_futures::spawn_local(async move {
-        let games = game_client::GameClient::init().get_games().await;
-        game_count_clone.set(games.len() as u8);
+    use_state(move || {
+        wasm_bindgen_futures::spawn_local(async move {
+            let games = game_client::GameClient::init().get_games().await;
+            game_count_clone.set(games.len() as u8);
+        })
     });
     html! {
         <>
