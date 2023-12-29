@@ -1,9 +1,11 @@
-use yew::{function_component, html, Html, Properties, UseStateHandle};
+use yew::html::onclick::Event;
+use yew::{function_component, html, Callback, Html, Properties, UseStateHandle};
 
 #[derive(Properties, PartialEq)]
 pub struct CounterProps {
     pub text: String,
     pub counter: UseStateHandle<u8>,
+    pub onclick: Callback<Event>,
 }
 
 /// The counter button component implementation.
@@ -18,6 +20,7 @@ pub fn counter_button_component(props: &CounterProps) -> Html {
                 </div>
                 <button
                     type="button"
+                    onclick={props.onclick.clone()}
                     data-te-ripple-color="light"
                     class="max-w-md w-full mb-2 flex rounded px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg justify-center"
                     style="background-color: rgb(62, 185, 145)">

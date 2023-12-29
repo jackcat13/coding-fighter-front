@@ -20,11 +20,17 @@ pub fn game_hub_component() -> Html {
             game_count_clone.set(games.len() as u8);
         })
     });
+    let on_click = {
+        let navigator = navigator.clone();
+        Callback::from(move |_| {
+            navigator.push(&Route::PublicGames);
+        })
+    };
     html! {
         <>
             <section class="bg-sky-950 min-h-screen grid place-items-center flex flex-col">
                 <div class="w-full max-w-md w-full mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5">
-                    <CounterButton text="Join a game" counter={game_count.clone()} />
+                    <CounterButton text="Join a game" counter={game_count.clone()} onclick={on_click} />
                     {create_game_button(navigator.clone())}
                     <LogoutComponent />
                 </div>

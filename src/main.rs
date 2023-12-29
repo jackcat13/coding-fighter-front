@@ -5,6 +5,7 @@ mod helpers;
 mod model;
 
 use crate::components::join_game_component::JoinGameComponent;
+use crate::components::public_games_component::PublicGamesComponent;
 use crate::helpers::local_storage::local_storage;
 use components::create_game_component::CreateGameComponent;
 use components::game_hub_component::GameHubComponent;
@@ -27,6 +28,8 @@ pub enum Route {
     Game,
     #[at("/join-game/:id")]
     JoinGame { id: String },
+    #[at("/public-games")]
+    PublicGames,
 }
 
 fn home() -> Html {
@@ -56,6 +59,16 @@ fn join_game(id: String) -> Html {
             <JoinGameComponent game_id={id} />
             {footer()}
         </>
+    }
+}
+
+fn public_games() -> Html {
+    html! {
+        < >
+            { header() }
+            < PublicGamesComponent / >
+            { footer() }
+        < / >
     }
 }
 
@@ -112,6 +125,7 @@ fn switch(routes: Route) -> Html {
             Route::NotFound => not_found(),
             Route::Game => game(),
             Route::JoinGame { id } => join_game(id),
+            Route::PublicGames => public_games(),
         },
         None => login(),
     }
