@@ -4,8 +4,8 @@ use crate::components::loading_button_component::LoadingButton;
 use crate::dto::game_dto::GameDto;
 use crate::helpers::local_storage::local_storage;
 use crate::model::game::*;
-use crate::use_navigator;
 use crate::Route;
+use crate::{use_navigator, USER_SESSION};
 use gloo::utils::document;
 use js_sys::Object;
 use serde_json::to_string;
@@ -36,6 +36,9 @@ pub fn create_game_component() -> Html {
             let navigator = navigator.clone();
             let storage = storage.clone();
             let document = document();
+            let current_user = storage
+                .get_item(USER_SESSION)
+                .expect("Could not get current user session");
             let topics_node = document.get_elements_by_name(GAME_TOPICS);
             let topics_array = Object::values(&topics_node);
             let topics_html: Vec<HtmlInputElement> = topics_array
@@ -63,6 +66,7 @@ pub fn create_game_component() -> Html {
                 question_number: data.clone().question_number,
                 is_private,
                 is_started: false,
+                creator: current_user,
             };
             wasm_bindgen_futures::spawn_local(async move {
                 gloo::console::log!("Calling the client to create game");
