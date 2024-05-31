@@ -4,6 +4,7 @@ use crate::helpers::local_storage::local_storage;
 use crate::{Route, USER_SESSION};
 use serde::{Deserialize, Serialize};
 use std::ops::Deref;
+use uuid::Uuid;
 use validator::Validate;
 use web_sys::SubmitEvent;
 use yew::{function_component, html, use_state, Callback, Html, NodeRef, UseStateHandle};
@@ -46,7 +47,7 @@ pub fn login_component() -> Html {
     let on_submit = {
         let form = form.clone();
         let data = form.deref().clone();
-        let guest_name = data.guest_name.clone();
+        let guest_name = Uuid::new_v4().to_string() + &data.guest_name.clone();
         let guest_name_error = guest_name_error.clone();
         Callback::from(move |event: SubmitEvent| match form.validate() {
             Ok(_) => {

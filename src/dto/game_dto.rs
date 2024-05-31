@@ -9,4 +9,5 @@ pub struct GameDto {
     pub question_number: i8,
     pub is_private: bool,
     pub is_started: bool,
+    pub creator: Option<String>,
 }
