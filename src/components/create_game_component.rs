@@ -62,6 +62,7 @@ pub fn create_game_component() -> Html {
                 topics,
                 question_number: data.clone().question_number,
                 is_private,
+                is_started: false,
             };
             wasm_bindgen_futures::spawn_local(async move {
                 gloo::console::log!("Calling the client to create game");
