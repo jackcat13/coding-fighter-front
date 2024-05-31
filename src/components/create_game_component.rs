@@ -70,7 +70,9 @@ pub fn create_game_component() -> Html {
             };
             wasm_bindgen_futures::spawn_local(async move {
                 gloo::console::log!("Calling the client to create game");
-                let game_created = client.create_game(game_dto.clone()).await;
+                let game_dto = game_dto.clone();
+                let mut game_created = client.create_game(game_dto.clone()).await;
+                game_created.creator = game_dto.creator;
                 storage
                     .set_item(
                         CURRENT_GAME,
