@@ -32,30 +32,21 @@ pub fn join_game_component(props: &Props) -> Html {
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
-            let game = storage.get_item(CURRENT_GAME).unwrap_or(None);
-            match game {
-                None => {
-                    let game_fetched = client.get_game(game_id).await;
-                    match game_fetched {
-                        None => {}
-                        Some(game) => {
-                            storage
-                                .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
-                                .expect("Failed to store current game info");
-                            game_async.set(Some(game));
-                        }
-                    }
-                }
+            let game_fetched = client.get_game(game_id).await;
+            match game_fetched {
+                None => {}
                 Some(game) => {
                     let user = storage
                         .get_item(USER_SESSION)
                         .expect("Failed to load current user from local storage");
-                    let game: GameDto = serde_json::from_str(&game)
-                        .expect("Failed to get current game from local storage");
+                    game_async.set(Some(game.clone()));
                     if game.creator == user {
                         let start_button = is_start_button.clone();
                         start_button.set(true);
                     }
+                    storage
+                        .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
+                        .expect("Failed to store current game info");
                 }
             }
         });
