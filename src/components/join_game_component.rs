@@ -1,11 +1,14 @@
 use gloo::utils::window;
 use serde_json::to_string;
-use web_sys::SubmitEvent;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use web_sys::{MessageEvent, SubmitEvent};
 use yew::{function_component, html, use_state, Callback, Html, Properties};
 
 use crate::client::game_client::GameClient;
 use crate::components::loading_button_component::LoadingButton;
 use crate::dto::game_dto::GameDto;
+use crate::dto::game_progress_dto::GameProgressDto;
 use crate::helpers::local_storage::local_storage;
 use crate::model::game::CURRENT_GAME;
 use crate::USER_SESSION;
@@ -29,10 +32,12 @@ pub fn join_game_component(props: &Props) -> Html {
     let is_start_button = use_state(|| false);
     let is_start_button_clone = is_start_button.clone();
     let on_submit = { Callback::from(move |_event: SubmitEvent| {}) };
+    let game_progress = use_state(|| None);
+    let game_progress_async = game_progress.clone();
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
-            let game_fetched = client.get_game(game_id).await;
+            let game_fetched = client.get_game(game_id.clone()).await;
             match game_fetched {
                 None => {}
                 Some(game) => {
@@ -49,26 +54,49 @@ pub fn join_game_component(props: &Props) -> Html {
                         .expect("Failed to store current game info");
                 }
             }
+
+            let es = client.progress_events_souce(game_id);
+            let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
+                let text = event.data().as_string().unwrap();
+                if text != "NOT STARTED" {
+                    let progress: GameProgressDto = serde_json::from_str(&text).unwrap();
+                    game_progress_async.set(Some(progress));
+                }
+            }) as Box<dyn FnMut(MessageEvent)>);
+            let _ = es.add_event_listener_with_callback("input", cb.as_ref().unchecked_ref());
         });
     });
-    html! {
-        <>
-            <section class="bg-sky-950 min-h-screen w-full grid place-items-center flex flex-col">
-                <form onsubmit={on_submit} >
+    let game_progress = game_progress.clone();
+    if game_progress.clone().is_some() {
+        html! {
+            <>
+                <section class="bg-sky-950 min-h-screen w-full grid place-items-center flex flex-col">
                     <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
-                        <h1 class="text-4xl xl:text-6xl text-center font-[600] text-orange-600 mb-4">
-                          {"Game : "}
-                        </h1>
-                        <div>
-                            {"Share following URL to invite players : "}
-                            {location.href().expect("Failed to resolve host")}
-                        </div>
-                        {game_info(&game.clone())}
-                        {render_start_button(*is_start_button_clone)}
+                        {"Started"}
                     </div>
-                </form>
-            </section>
-        </>
+                </section>
+            </>
+        }
+    } else {
+        html! {
+            <>
+                <section class="bg-sky-950 min-h-screen w-full grid place-items-center flex flex-col">
+                    <form onsubmit={on_submit} >
+                        <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
+                            <h1 class="text-4xl xl:text-6xl text-center font-[600] text-orange-600 mb-4">
+                              {"Game : "}
+                            </h1>
+                            <div>
+                                {"Share following URL to invite players : "}
+                                {location.href().expect("Failed to resolve host")}
+                            </div>
+                            {game_info(&game.clone())}
+                            {render_start_button(*is_start_button_clone)}
+                        </div>
+                    </form>
+                </section>
+            </>
+        }
     }
 }
 

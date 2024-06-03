@@ -9,7 +9,7 @@ edition = "2021"
 yew = { version = "0.21.0", features = ["csr"] }
 yew-router = "0.18.0"
 wasm-bindgen-test = "0.3.34"
-web-sys = { version = "0.3.61", features = ["FormData", "HtmlFormElement","HtmlDocument"] }
+web-sys = { version = "0.3.61", features = ["FormData", "HtmlFormElement","HtmlDocument", "EventSource"] }
 gloo = "0.11.0"
 gloo-storage = "0.3.0"
 gloo-net = "0.5.0"
@@ -28,3 +28,4 @@ reqwest = { version = "0.11.23", features = ["json"] }
 dotenv = "0.15.0"
 dotenv_codegen = "0.15.0"
 uuid = { version = "1.8.0", features = ["v4"] }
+futures-util = "0.3.29"
