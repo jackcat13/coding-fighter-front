@@ -1,8 +1,12 @@
-use crate::dto::game_dto::GameDto;
-use std::ops::Add;
 extern crate dotenv;
+
+use std::ops::Add;
+
 use dotenv::dotenv;
 use dotenv_codegen::dotenv;
+use reqwest_eventsource::EventSource;
+
+use crate::dto::game_dto::GameDto;
 
 pub struct GameClient {
     url: String,
@@ -40,14 +44,24 @@ impl GameClient {
         games
     }
 
-    pub async fn get_game(&self, game_id: String) -> Option<GameDto> {
+    pub async fn get_game(&self, id: String) -> Option<GameDto> {
         gloo::console::log!("Calling the client to get game by id");
-        let get_url = self.url.clone().add("/game/").add(game_id.as_str());
+        let get_url = self.url.clone().add("/game/").add(id.as_str());
         let client = reqwest::Client::new();
         let res = client.get(get_url).send().await;
         let res = res.expect("Failed to get result from client to get game by id");
         let game: Option<GameDto> = res.json().await.expect("Failed to parse fetched game");
         gloo::console::log!("Returning the game");
         game
+    }
+
+    pub fn progress_events_souce(&self, id: String) -> EventSource {
+        EventSource::get(
+            self.url
+                .clone()
+                .add("/game")
+                .add(id.as_str())
+                .add("/progress"),
+        )
     }
 }

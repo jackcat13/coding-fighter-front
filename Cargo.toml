@@ -25,6 +25,8 @@ strum = "0.25.0"
 strum_macros = { version = "0.25.3", features = [] }
 material-yew = { version = "0.3.0", features = ["checkbox"] }
 reqwest = { version = "0.11.23", features = ["json"] }
+reqwest-eventsource = "0.6.0"
 dotenv = "0.15.0"
 dotenv_codegen = "0.15.0"
 uuid = { version = "1.8.0", features = ["v4"] }
+futures-util = "0.3.29"
