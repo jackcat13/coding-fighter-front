@@ -16,6 +16,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 const USER_SESSION: &str = "user-session";
+const AFTER_UUID_POSITION: usize = 35;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
@@ -77,11 +78,18 @@ fn header() -> Html {
     let user = local_storage
         .get_item(USER_SESSION)
         .expect("Failed to load user from storage");
+    let user_name = &mut String::new();
+    match user {
+        None => {}
+        Some(user) => {
+            let _ = &user[AFTER_UUID_POSITION..].clone_into(user_name);
+        }
+    };
     //TODO proper profile panel
     html! {
         <>
             <div class="absolute top-0 right-0 m-5">
-                {"Welcome "}{user}
+                {"Welcome "}{user_name}
             </div>
         </>
     }
