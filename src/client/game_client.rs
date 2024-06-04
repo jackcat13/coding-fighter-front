@@ -4,9 +4,12 @@ use std::ops::Add;
 
 use dotenv::dotenv;
 use dotenv_codegen::dotenv;
+use reqwest::header::CONTENT_TYPE;
 use web_sys::EventSource;
 
 use crate::dto::game_dto::GameDto;
+
+const APPLICATION_JSON: &str = "application/json";
 
 pub struct GameClient {
     url: String,
@@ -53,6 +56,19 @@ impl GameClient {
         let game: Option<GameDto> = res.json().await.expect("Failed to parse fetched game");
         gloo::console::log!("Returning the game");
         game
+    }
+
+    pub async fn start_game(&self, id: String) {
+        gloo::console::log!("Calling the client to start game by id");
+        let get_url = self.url.clone().add("/game/").add(id.as_str());
+        let client = reqwest::Client::new();
+        let res = client
+            .patch(get_url)
+            .header(CONTENT_TYPE, APPLICATION_JSON)
+            .send()
+            .await;
+        let _ = res.expect("Failed to get result from client to start game by id");
+        gloo::console::log!("Game should be started");
     }
 
     pub fn progress_events_souce(&self, id: String) -> EventSource {

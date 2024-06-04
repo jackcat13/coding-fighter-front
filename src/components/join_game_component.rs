@@ -28,16 +28,26 @@ pub fn join_game_component(props: &Props) -> Html {
     let storage = local_storage();
     let game = use_state(|| None);
     let game_async = game.clone();
-    let game_id = props.game_id.clone();
+    let game_id_string = props.game_id.clone();
+    let game_id_string_async = props.game_id.clone();
     let is_start_button = use_state(|| false);
     let is_start_button_clone = is_start_button.clone();
-    let on_submit = { Callback::from(move |_event: SubmitEvent| {}) };
+    let on_submit = {
+        Callback::from(move |event: SubmitEvent| {
+            event.prevent_default();
+            let game_id_string_async = game_id_string_async.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let client = GameClient::init();
+                let _ = client.start_game(game_id_string_async.clone()).await;
+            });
+        })
+    };
     let game_progress = use_state(|| None);
     let game_progress_async = game_progress.clone();
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
-            let game_fetched = client.get_game(game_id.clone()).await;
+            let game_fetched = client.get_game(game_id_string.clone()).await;
             match game_fetched {
                 None => {}
                 Some(game) => {
@@ -55,7 +65,7 @@ pub fn join_game_component(props: &Props) -> Html {
                 }
             }
 
-            let es = client.progress_events_souce(game_id);
+            let es = client.progress_events_souce(game_id_string);
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
                 let text = event.data().as_string().unwrap();
                 if text != "NOT STARTED" {
