@@ -5,7 +5,6 @@ use std::ops::Add;
 use dotenv::dotenv;
 use dotenv_codegen::dotenv;
 use reqwest::header::CONTENT_TYPE;
-use web_sys::EventSource;
 
 use crate::dto::game_dto::GameDto;
 
@@ -71,15 +70,7 @@ impl GameClient {
         gloo::console::log!("Game should be started");
     }
 
-    pub fn progress_events_souce(&self, id: String) -> EventSource {
-        EventSource::new(
-            &self
-                .url
-                .clone()
-                .add("/game/")
-                .add(id.as_str())
-                .add("/progress"),
-        )
-        .expect("Failed to create progress event source")
+    pub fn progress_events_souce_url(&self, id: &str) -> String {
+        String::from(&self.url.clone().add("/game/").add(id).add("/progress"))
     }
 }

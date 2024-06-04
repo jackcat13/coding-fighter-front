@@ -2,7 +2,7 @@ use gloo::utils::window;
 use serde_json::to_string;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
-use web_sys::{MessageEvent, SubmitEvent};
+use web_sys::{EventSource, MessageEvent, SubmitEvent};
 use yew::{function_component, html, use_state, Callback, Html, Properties};
 
 use crate::client::game_client::GameClient;
@@ -65,24 +65,28 @@ pub fn join_game_component(props: &Props) -> Html {
                 }
             }
 
-            let es = client.progress_events_souce(game_id_string);
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
-                let text = event.data().as_string().unwrap();
-                if text != "NOT STARTED" {
-                    let progress: GameProgressDto = serde_json::from_str(&text).unwrap();
-                    game_progress_async.set(Some(progress));
+                if let Some(msg) = event.data().as_string() {
+                    if !msg.eq(&String::from("NOT STARTED")) {
+                        let progress: GameProgressDto = serde_json::from_str(&msg).unwrap();
+                        game_progress_async.set(Some(progress));
+                    }
                 }
             }) as Box<dyn FnMut(MessageEvent)>);
-            let _ = es.add_event_listener_with_callback("input", cb.as_ref().unchecked_ref());
+            let es = EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap();
+            es.set_onmessage(Some(cb.as_ref().unchecked_ref()));
+            cb.forget();
         });
     });
-    let game_progress = game_progress.clone();
-    if game_progress.clone().is_some() {
+    if let Some(progress) = &*game_progress.clone() {
         html! {
             <>
                 <section class="bg-sky-950 min-h-screen w-full grid place-items-center flex flex-col">
                     <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
-                        {"Started"}
+                        <div>{"Questions : "}{&progress.current_question}{" / "}{&progress.question_number}</div>
+                        <div>{&progress.question_content.question_text}</div>
+                        <div><button>{&progress.question_content.answer_1}</button><button>{&progress.question_content.answer_2}</button></div>
+                        <div><button>{&progress.question_content.answer_3}</button><button>{&progress.question_content.answer_4}</button></div>
                     </div>
                 </section>
             </>
