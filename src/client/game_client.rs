@@ -55,6 +55,17 @@ impl GameClient {
         game
     }
 
+    pub async fn start_game(&self, id: String) -> Option<GameDto> {
+        gloo::console::log!("Calling the client to start game by id");
+        let get_url = self.url.clone().add("/game/").add(id.as_str());
+        let client = reqwest::Client::new();
+        let res = client.patch(get_url).send().await;
+        let res = res.expect("Failed to get result from client to start game by id");
+        let game: Option<GameDto> = res.json().await.expect("Failed to parse fetched game");
+        gloo::console::log!("Game should be started");
+        game
+    }
+
     pub fn progress_events_souce(&self, id: String) -> EventSource {
         EventSource::new(
             &self
