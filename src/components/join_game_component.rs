@@ -2,7 +2,7 @@ use gloo::utils::window;
 use serde_json::to_string;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
-use web_sys::{MessageEvent, SubmitEvent};
+use web_sys::{EventSource, MessageEvent, SubmitEvent};
 use yew::{function_component, html, use_state, Callback, Html, Properties};
 
 use crate::client::game_client::GameClient;
@@ -65,15 +65,17 @@ pub fn join_game_component(props: &Props) -> Html {
                 }
             }
 
-            let es = client.progress_events_souce(game_id_string);
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
-                let text = event.data().as_string().unwrap();
-                if text != "NOT STARTED" {
-                    let progress: GameProgressDto = serde_json::from_str(&text).unwrap();
+                gloo::console::log!("New event to process...");
+                let msg = event.as_string().unwrap();
+                if !msg.eq(&String::from("NOT STARTED")) {
+                    gloo::console::log!("Setting game process information in var");
+                    let progress: GameProgressDto = serde_json::from_str(&msg).unwrap();
                     game_progress_async.set(Some(progress));
                 }
             }) as Box<dyn FnMut(MessageEvent)>);
-            let _ = es.add_event_listener_with_callback("input", cb.as_ref().unchecked_ref());
+            let es = EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap();
+            es.set_onmessage(Some(cb.as_ref().unchecked_ref()));
         });
     });
     let game_progress = game_progress.clone();
