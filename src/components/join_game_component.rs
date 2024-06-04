@@ -1,8 +1,6 @@
 use gloo::utils::window;
 use serde_json::to_string;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
-use web_sys::{MessageEvent, SubmitEvent};
+use web_sys::SubmitEvent;
 use yew::{function_component, html, use_state, Callback, Html, Properties};
 
 use crate::client::game_client::GameClient;
@@ -66,14 +64,13 @@ pub fn join_game_component(props: &Props) -> Html {
             }
 
             let es = client.progress_events_souce(game_id_string);
-            let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
-                let text = event.data().as_string().unwrap();
+            for event in es.receiver().iter() {
+                let text = format!("{:?}", event.data);
                 if text != "NOT STARTED" {
                     let progress: GameProgressDto = serde_json::from_str(&text).unwrap();
                     game_progress_async.set(Some(progress));
                 }
-            }) as Box<dyn FnMut(MessageEvent)>);
-            let _ = es.add_event_listener_with_callback("input", cb.as_ref().unchecked_ref());
+            }
         });
     });
     let game_progress = game_progress.clone();

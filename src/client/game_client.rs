@@ -5,7 +5,7 @@ use std::ops::Add;
 use dotenv::dotenv;
 use dotenv_codegen::dotenv;
 use reqwest::header::CONTENT_TYPE;
-use web_sys::EventSource;
+use sse_client::EventSource;
 
 use crate::dto::game_dto::GameDto;
 
