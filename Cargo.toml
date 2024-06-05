@@ -10,7 +10,7 @@ yew = { version = "0.21.0", features = ["csr"] }
 yew-router = "0.18.0"
 yew-event-source = "0.2.1"
 wasm-bindgen-test = "0.3.34"
-web-sys = { version = "0.3.61", features = ["FormData", "HtmlFormElement", "HtmlDocument", "EventListener"] }
+web-sys = { version = "0.3.69", features = ["FormData", "HtmlFormElement", "HtmlDocument", "EventListener"] }
 gloo = "0.11.0"
 gloo-storage = "0.3.0"
 gloo-net = "0.5.0"
