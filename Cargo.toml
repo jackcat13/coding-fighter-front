@@ -25,7 +25,7 @@ serde-wasm-bindgen = "0.6.3"
 strum = "0.25.0"
 strum_macros = { version = "0.25.3", features = [] }
 material-yew = { version = "0.3.0", features = ["checkbox"] }
-reqwest = { version = "0.11.23", features = ["json"] }
+reqwest = { version = "0.12.4", features = ["json"] }
 dotenv = "0.15.0"
 dotenv_codegen = "0.15.0"
 uuid = { version = "1.8.0", features = ["v4"] }
