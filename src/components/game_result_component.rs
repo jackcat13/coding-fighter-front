@@ -37,18 +37,22 @@ pub fn game_result_component(props: &Props) -> Html {
     });
     html! {
         <>
-            <h1>{format!("Game {}", game_id)}</h1>
-            <div>
-                <h2>{"Game result"}</h2>
-                // Display the results
-                <ul>
-                    {for results.iter().map(|(user, score)| {
-                        html! {
-                            <li>{format!("User: {} - Score: {}", user, score)}</li>
-                        }
-                    })}
-                </ul>
-            </div>
+            <section class="bg-sky-950 min-h-screen grid place-items-center flex flex-col">
+                <div class="flex flex-col bg-ct-dark-100 rounded-2xl p-8 space-y-5 text-sky-950">
+                    <h1>{format!("Game {}", game_id)}</h1>
+                    <div>
+                        <h2>{"Game result"}</h2>
+                        // Display the results
+                        <table>
+                            {for results.iter().map(|(user, score)| {
+                                html! {
+                                    <tr><td>{format!("User: {} - Score: {}", user, score)}</td></tr>
+                                }
+                            })}
+                        </table>
+                    </div>
+                </div>
+            </section>
         </>
     }
 }
