@@ -7,7 +7,11 @@ use dotenv_codegen::dotenv;
 use reqwest::header::CONTENT_TYPE;
 use serde_json::json;
 
-use crate::{dto::game_dto::GameDto, helpers::local_storage::local_storage, USER_SESSION};
+use crate::{
+    dto::{answer::GameAnswerDto, game_dto::GameDto},
+    helpers::local_storage::local_storage,
+    USER_SESSION,
+};
 
 const APPLICATION_JSON: &str = "application/json";
 
@@ -94,6 +98,23 @@ impl GameClient {
             .await;
         let _ = res.expect("Failed to get result from client to send answer");
         gloo::console::log!("Answer should be sent");
+    }
+
+    pub async fn get_game_answers(&self, game_id: String) -> Vec<GameAnswerDto> {
+        gloo::console::log!("Calling the client to get game answers");
+        let get_answers_url = self
+            .url
+            .clone()
+            .add("/game/")
+            .add(game_id.as_str())
+            .add("/answers");
+        let client = reqwest::Client::new();
+        let res = client.get(get_answers_url).send().await;
+        let res = res.expect("Failed to get answers from get answers client");
+        let answers: Vec<GameAnswerDto> =
+            res.json().await.expect("Failed to parse fetched answers");
+        gloo::console::log!("Returning the answers");
+        answers
     }
 
     pub fn progress_events_souce_url(&self, id: &str) -> String {
