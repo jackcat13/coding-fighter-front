@@ -4,6 +4,7 @@ use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::{EventSource, MessageEvent, SubmitEvent};
 use yew::{function_component, html, use_state, Callback, Html, Properties};
+use yew_router::hooks::use_navigator;
 
 use crate::client::game_client::GameClient;
 use crate::components::loading_button_component::LoadingButton;
@@ -11,7 +12,7 @@ use crate::dto::game_dto::GameDto;
 use crate::dto::game_progress_dto::GameProgressDto;
 use crate::helpers::local_storage::local_storage;
 use crate::model::game::CURRENT_GAME;
-use crate::USER_SESSION;
+use crate::{Route, USER_SESSION};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -24,6 +25,7 @@ pub struct Props {
 /// Game may be started by the game owner if enough players are connected.
 #[function_component(JoinGameComponent)]
 pub fn join_game_component(props: &Props) -> Html {
+    let navigator = use_navigator().expect("Failed to load navigator");
     let location = window().location();
     let storage = local_storage();
     let game = use_state(|| None);
@@ -84,6 +86,7 @@ pub fn join_game_component(props: &Props) -> Html {
     };
     let game_progress = use_state(|| None);
     let game_progress_async = game_progress.clone();
+    let game_id_string_async = game_id_string.clone();
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
@@ -106,10 +109,16 @@ pub fn join_game_component(props: &Props) -> Html {
             }
 
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
+                let navigator = navigator.clone();
+                let game_id_string_async = game_id_string_async.clone();
                 if let Some(msg) = event.data().as_string() {
-                    if !msg.eq(&String::from("NOT STARTED")) {
+                    if !(msg.eq(&String::from("NOT STARTED")) || msg.eq(&String::from("END"))) {
                         let progress: GameProgressDto = serde_json::from_str(&msg).unwrap();
                         game_progress_async.set(Some(progress));
+                    } else if msg.eq(&String::from("END")) {
+                        navigator.push(&Route::GameResult {
+                            id: game_id_string_async,
+                        });
                     }
                 }
             }) as Box<dyn FnMut(MessageEvent)>);

@@ -9,6 +9,7 @@ use crate::components::public_games_component::PublicGamesComponent;
 use crate::helpers::local_storage::local_storage;
 use components::create_game_component::CreateGameComponent;
 use components::game_hub_component::GameHubComponent;
+use components::game_result_component::GameResultComponent;
 use components::login_component::LoginComponent;
 use components::social_media_components::*;
 use yew::functional::*;
@@ -31,6 +32,8 @@ pub enum Route {
     JoinGame { id: String },
     #[at("/public-games")]
     PublicGames,
+    #[at("/game-result/:id")]
+    GameResult { id: String },
 }
 
 fn home() -> Html {
@@ -58,6 +61,16 @@ fn join_game(id: String) -> Html {
         <>
             {header()}
             <JoinGameComponent game_id={id} />
+            {footer()}
+        </>
+    }
+}
+
+fn game_result(id: String) -> Html {
+    html! {
+        <>
+            {header()}
+            <GameResultComponent game_id={id} />
             {footer()}
         </>
     }
@@ -134,6 +147,7 @@ fn switch(routes: Route) -> Html {
             Route::Game => game(),
             Route::JoinGame { id } => join_game(id),
             Route::PublicGames => public_games(),
+            Route::GameResult { id } => game_result(id),
         },
         None => login(),
     }

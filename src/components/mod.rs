@@ -2,6 +2,7 @@ pub mod button_components;
 pub mod create_game_component;
 pub mod form_input;
 pub mod game_hub_component;
+pub mod game_result_component;
 pub mod join_game_component;
 pub mod loading_button_component;
 pub mod login_component;
