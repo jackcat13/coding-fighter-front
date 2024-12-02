@@ -17,4 +17,5 @@ pub struct QuestionDto {
     pub answer_3: String,
     pub answer_4: String,
     pub good_answer_number: i8,
+    pub remaining_time: u64,
 }

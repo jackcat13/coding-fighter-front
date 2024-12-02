@@ -134,6 +134,7 @@ pub fn join_game_component(props: &Props) -> Html {
                     <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
                         <div>{"Questions : "}{&progress.current_question}{" / "}{&progress.question_number}</div>
                         <div>{&progress.question_content.question_text}</div>
+                        <div>{"Remaining seconds : "}{&progress.question_content.remaining_time}</div>
                         <div>
                             <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click}>{&progress.question_content.answer_1}</button>
                         </div><div>
