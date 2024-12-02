@@ -16,7 +16,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 const USER_SESSION: &str = "user-session";
-const AFTER_UUID_POSITION: usize = 35;
+const AFTER_UUID_POSITION: usize = 36;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {

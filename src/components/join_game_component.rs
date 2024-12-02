@@ -42,6 +42,46 @@ pub fn join_game_component(props: &Props) -> Html {
             });
         })
     };
+    let game_id_string_async = game_id_string.clone();
+    let on_click = {
+        Callback::from(move |_| {
+            let game_id_string_async = game_id_string_async.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let client = GameClient::init();
+                client.send_answer(game_id_string_async, 1).await;
+            });
+        })
+    };
+    let game_id_string_async = game_id_string.clone();
+    let on_click2 = {
+        Callback::from(move |_| {
+            let game_id_string_async = game_id_string_async.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let client = GameClient::init();
+                client.send_answer(game_id_string_async, 2).await;
+            });
+        })
+    };
+    let game_id_string_async = game_id_string.clone();
+    let on_click3 = {
+        Callback::from(move |_| {
+            let game_id_string_async = game_id_string_async.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let client = GameClient::init();
+                client.send_answer(game_id_string_async, 3).await;
+            });
+        })
+    };
+    let game_id_string_async = game_id_string.clone();
+    let on_click4 = {
+        Callback::from(move |_| {
+            let game_id_string_async = game_id_string_async.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let client = GameClient::init();
+                client.send_answer(game_id_string_async, 4).await;
+            });
+        })
+    };
     let game_progress = use_state(|| None);
     let game_progress_async = game_progress.clone();
     use_state(move || {
@@ -85,8 +125,15 @@ pub fn join_game_component(props: &Props) -> Html {
                     <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
                         <div>{"Questions : "}{&progress.current_question}{" / "}{&progress.question_number}</div>
                         <div>{&progress.question_content.question_text}</div>
-                        <div><button>{&progress.question_content.answer_1}</button><button>{&progress.question_content.answer_2}</button></div>
-                        <div><button>{&progress.question_content.answer_3}</button><button>{&progress.question_content.answer_4}</button></div>
+                        <div>
+                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click}>{&progress.question_content.answer_1}</button>
+                        </div><div>
+                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click2}>{&progress.question_content.answer_2}</button>
+                        </div><div>
+                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click3}>{&progress.question_content.answer_3}</button>
+                        </div><div>
+                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click4}>{&progress.question_content.answer_4}</button>
+                        </div>
                     </div>
                 </section>
             </>

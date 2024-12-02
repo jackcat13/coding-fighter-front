@@ -5,8 +5,9 @@ use std::ops::Add;
 use dotenv::dotenv;
 use dotenv_codegen::dotenv;
 use reqwest::header::CONTENT_TYPE;
+use serde_json::json;
 
-use crate::dto::game_dto::GameDto;
+use crate::{dto::game_dto::GameDto, helpers::local_storage::local_storage, USER_SESSION};
 
 const APPLICATION_JSON: &str = "application/json";
 
@@ -68,6 +69,31 @@ impl GameClient {
             .await;
         let _ = res.expect("Failed to get result from client to start game by id");
         gloo::console::log!("Game should be started");
+    }
+
+    pub async fn send_answer(&self, id: String, answer: i8) {
+        gloo::console::log!("Calling the client to send answer");
+        let storage = local_storage();
+        let user = storage
+            .get_item(USER_SESSION)
+            .expect("Failed to get user from local storage");
+        let get_url = self
+            .url
+            .clone()
+            .add("/game/")
+            .add(id.as_str())
+            .add("/progress/")
+            .add(answer.to_string().as_str());
+
+        let client = reqwest::Client::new();
+        let res = client
+            .post(get_url)
+            .header(CONTENT_TYPE, APPLICATION_JSON)
+            .json(&json!({"user": user}))
+            .send()
+            .await;
+        let _ = res.expect("Failed to get result from client to send answer");
+        gloo::console::log!("Answer should be sent");
     }
 
     pub fn progress_events_souce_url(&self, id: &str) -> String {
