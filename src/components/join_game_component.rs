@@ -14,6 +14,9 @@ use crate::helpers::local_storage::local_storage;
 use crate::model::game::CURRENT_GAME;
 use crate::{Route, USER_SESSION};
 
+const QUESTION_BACKGROUND: &str = " bg-orange-600";
+const SELECTED_BACKGROUND: &str = " bg-orange-900";
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub game_id: String,
@@ -34,6 +37,14 @@ pub fn join_game_component(props: &Props) -> Html {
     let game_id_string_async = props.game_id.clone();
     let is_start_button = use_state(|| false);
     let is_start_button_clone = is_start_button.clone();
+    let color_button = use_state(|| QUESTION_BACKGROUND);
+    let color_button_clone = color_button.clone();
+    let color_button_2 = use_state(|| QUESTION_BACKGROUND);
+    let color_button_clone_2 = color_button_2.clone();
+    let color_button_3 = use_state(|| QUESTION_BACKGROUND);
+    let color_button_clone_3 = color_button_3.clone();
+    let color_button_4 = use_state(|| QUESTION_BACKGROUND);
+    let color_button_clone_4 = color_button_4.clone();
     let on_submit = {
         Callback::from(move |event: SubmitEvent| {
             event.prevent_default();
@@ -48,37 +59,81 @@ pub fn join_game_component(props: &Props) -> Html {
     let on_click = {
         Callback::from(move |_| {
             let game_id_string_async = game_id_string_async.clone();
+            let color_button_clone = color_button_clone.clone();
+            let color_button_clone_2 = color_button_clone_2.clone();
+            let color_button_clone_3 = color_button_clone_3.clone();
+            let color_button_clone_4 = color_button_clone_4.clone();
             wasm_bindgen_futures::spawn_local(async move {
+                color_button_clone.set(SELECTED_BACKGROUND);
+                color_button_clone_2.set(QUESTION_BACKGROUND);
+                color_button_clone_3.set(QUESTION_BACKGROUND);
+                color_button_clone_4.set(QUESTION_BACKGROUND);
                 let client = GameClient::init();
                 client.send_answer(game_id_string_async, 1).await;
             });
         })
     };
     let game_id_string_async = game_id_string.clone();
+    let color_button_clone = color_button.clone();
+    let color_button_clone_2 = color_button_2.clone();
+    let color_button_clone_3 = color_button_3.clone();
+    let color_button_clone_4 = color_button_4.clone();
     let on_click2 = {
         Callback::from(move |_| {
             let game_id_string_async = game_id_string_async.clone();
+            let color_button_clone = color_button_clone.clone();
+            let color_button_clone_2 = color_button_clone_2.clone();
+            let color_button_clone_3 = color_button_clone_3.clone();
+            let color_button_clone_4 = color_button_clone_4.clone();
             wasm_bindgen_futures::spawn_local(async move {
+                color_button_clone.set(QUESTION_BACKGROUND);
+                color_button_clone_2.set(SELECTED_BACKGROUND);
+                color_button_clone_3.set(QUESTION_BACKGROUND);
+                color_button_clone_4.set(QUESTION_BACKGROUND);
                 let client = GameClient::init();
                 client.send_answer(game_id_string_async, 2).await;
             });
         })
     };
     let game_id_string_async = game_id_string.clone();
+    let color_button_clone = color_button.clone();
+    let color_button_clone_2 = color_button_2.clone();
+    let color_button_clone_3 = color_button_3.clone();
+    let color_button_clone_4 = color_button_4.clone();
     let on_click3 = {
         Callback::from(move |_| {
             let game_id_string_async = game_id_string_async.clone();
+            let color_button_clone = color_button_clone.clone();
+            let color_button_clone_2 = color_button_clone_2.clone();
+            let color_button_clone_3 = color_button_clone_3.clone();
+            let color_button_clone_4 = color_button_clone_4.clone();
             wasm_bindgen_futures::spawn_local(async move {
+                color_button_clone.set(QUESTION_BACKGROUND);
+                color_button_clone_2.set(QUESTION_BACKGROUND);
+                color_button_clone_3.set(SELECTED_BACKGROUND);
+                color_button_clone_4.set(QUESTION_BACKGROUND);
                 let client = GameClient::init();
                 client.send_answer(game_id_string_async, 3).await;
             });
         })
     };
     let game_id_string_async = game_id_string.clone();
+    let color_button_clone = color_button.clone();
+    let color_button_clone_2 = color_button_2.clone();
+    let color_button_clone_3 = color_button_3.clone();
+    let color_button_clone_4 = color_button_4.clone();
     let on_click4 = {
         Callback::from(move |_| {
             let game_id_string_async = game_id_string_async.clone();
+            let color_button_clone = color_button_clone.clone();
+            let color_button_clone_2 = color_button_clone_2.clone();
+            let color_button_clone_3 = color_button_clone_3.clone();
+            let color_button_clone_4 = color_button_clone_4.clone();
             wasm_bindgen_futures::spawn_local(async move {
+                color_button_clone.set(QUESTION_BACKGROUND);
+                color_button_clone_2.set(QUESTION_BACKGROUND);
+                color_button_clone_3.set(QUESTION_BACKGROUND);
+                color_button_clone_4.set(SELECTED_BACKGROUND);
                 let client = GameClient::init();
                 client.send_answer(game_id_string_async, 4).await;
             });
@@ -87,6 +142,10 @@ pub fn join_game_component(props: &Props) -> Html {
     let game_progress = use_state(|| None);
     let game_progress_async = game_progress.clone();
     let game_id_string_async = game_id_string.clone();
+    let color_button_clone = color_button.clone();
+    let color_button_clone_2 = color_button_2.clone();
+    let color_button_clone_3 = color_button_3.clone();
+    let color_button_clone_4 = color_button_4.clone();
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
@@ -108,12 +167,20 @@ pub fn join_game_component(props: &Props) -> Html {
                 }
             }
 
+            let mut question_index = -1;
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
                 let navigator = navigator.clone();
                 let game_id_string_async = game_id_string_async.clone();
                 if let Some(msg) = event.data().as_string() {
                     if !(msg.eq(&String::from("NOT STARTED")) || msg.eq(&String::from("END"))) {
                         let progress: GameProgressDto = serde_json::from_str(&msg).unwrap();
+                        if progress.current_question != question_index {
+                            color_button_clone.set(QUESTION_BACKGROUND);
+                            color_button_clone_2.set(QUESTION_BACKGROUND);
+                            color_button_clone_3.set(QUESTION_BACKGROUND);
+                            color_button_clone_4.set(QUESTION_BACKGROUND);
+                            question_index = progress.current_question;
+                        }
                         game_progress_async.set(Some(progress));
                     } else if msg.eq(&String::from("END")) {
                         navigator.push(&Route::GameResult {
@@ -136,13 +203,13 @@ pub fn join_game_component(props: &Props) -> Html {
                         <div>{&progress.question_content.question_text}</div>
                         <div>{"Remaining seconds : "}{&progress.question_content.remaining_time}</div>
                         <div>
-                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click}>{&progress.question_content.answer_1}</button>
+                            <button class={"w-full py-3 text-white font-semibold rounded-lg outline-none border-none flex justify-center".to_string() + *color_button} onclick={on_click}>{&progress.question_content.answer_1}</button>
                         </div><div>
-                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click2}>{&progress.question_content.answer_2}</button>
+                            <button class={"w-full py-3 text-white font-semibold rounded-lg outline-none border-none flex justify-center".to_string() + *color_button_2} onclick={on_click2}>{&progress.question_content.answer_2}</button>
                         </div><div>
-                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click3}>{&progress.question_content.answer_3}</button>
+                            <button class={"w-full py-3 text-white font-semibold rounded-lg outline-none border-none flex justify-center".to_string() + *color_button_3} onclick={on_click3}>{&progress.question_content.answer_3}</button>
                         </div><div>
-                            <button class="w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center" onclick={on_click4}>{&progress.question_content.answer_4}</button>
+                            <button class={"w-full py-3 text-white font-semibold rounded-lg outline-none border-none flex justify-center".to_string() + *color_button_4} onclick={on_click4}>{&progress.question_content.answer_4}</button>
                         </div>
                     </div>
                 </section>
@@ -194,7 +261,7 @@ fn render_start_button(is_start_button: bool) -> Html {
             <>
                 <LoadingButton
                   loading={&false}
-                  btn_color={Some("bg-orange-600".to_string())}
+                  btn_color={Some(QUESTION_BACKGROUND.to_string())}
                   text_color={Some("text-sky-950".to_string())}
                 >
                   {"Start game"}
