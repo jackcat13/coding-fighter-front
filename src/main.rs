@@ -12,12 +12,11 @@ use components::game_hub_component::GameHubComponent;
 use components::game_result_component::GameResultComponent;
 use components::login_component::LoginComponent;
 use components::social_media_components::*;
+use helpers::local_storage::resolve_user_from_storage;
+use helpers::local_storage::USER_SESSION;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-
-const USER_SESSION: &str = "user-session";
-const AFTER_UUID_POSITION: usize = 36;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
@@ -88,16 +87,7 @@ fn public_games() -> Html {
 
 fn header() -> Html {
     let local_storage = local_storage();
-    let user = local_storage
-        .get_item(USER_SESSION)
-        .expect("Failed to load user from storage");
-    let user_name = &mut String::new();
-    match user {
-        None => {}
-        Some(user) => {
-            let _ = &user[AFTER_UUID_POSITION..].clone_into(user_name);
-        }
-    };
+    let user_name = resolve_user_from_storage(&local_storage);
     //TODO proper profile panel
     html! {
         <>

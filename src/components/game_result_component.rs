@@ -3,7 +3,13 @@ use std::collections::HashMap;
 use yew::{function_component, html, use_state, Callback, Html, Properties};
 use yew_router::hooks::use_navigator;
 
-use crate::{client::game_client::GameClient, Route};
+use crate::{
+    client::game_client::GameClient, helpers::local_storage::resolve_simple_user_name, Route,
+};
+
+const GOLD_TEXT: &str = "text-amber-400";
+const SILVER_TEXT: &str = "text-zinc-400";
+const BRONZE_TEXT: &str = "text-red-800";
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -42,6 +48,17 @@ pub fn game_result_component(props: &Props) -> Html {
             }
         }
     });
+    let mut results = results
+        .iter()
+        .map(|(user, score)| Result {
+            user: user.clone(),
+            score: *score,
+        })
+        .collect::<Vec<Result>>();
+    results.sort_by(|a, b| b.score.cmp(&a.score));
+    let mut index = 0;
+    let mut previous_score = 0;
+    let mut previous_index = 0;
     html! {
         <>
             <section class="bg-sky-950 min-h-screen grid place-items-center flex flex-col">
@@ -51,11 +68,28 @@ pub fn game_result_component(props: &Props) -> Html {
                         <h2>{"Game result"}</h2>
                         // Display the results
                         <table>
-                            {for results.iter().map(|(user, score)| {
-                                html! {
-                                    <tr><td>{format!("User: {} - Score: {}", user, score)}</td></tr>
-                                }
-                            })}
+                                { for results.iter().map(|result| {
+                                    index += 1;
+                                    //TODO : remove next line by fixing backend
+                                    let user = result.user.clone().split(":").collect::<Vec<&str>>()[1].to_string().replace("\"", "").replace("}", "");
+                                    let user = resolve_simple_user_name(user);
+                                    let mut processed_index = index;
+                                    if previous_score == result.score {
+                                        processed_index = previous_index;
+                                    } else {
+                                        previous_score = result.score;
+                                    }
+                                    previous_index = processed_index;
+                                    let color = match processed_index {
+                                        1 => GOLD_TEXT,
+                                        2 => SILVER_TEXT,
+                                        3 => BRONZE_TEXT,
+                                        _ => ""
+                                    };
+                                    html! {
+                                        <tr><td class={color}>{format!("{}. User: {} - Score: {}", processed_index, user, result.score)}</td></tr>
+                                    }
+                                })}
                         </table>
                         <button class={"w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center"} onclick={on_click}>{"Home"}</button>
                     </div>
@@ -63,4 +97,9 @@ pub fn game_result_component(props: &Props) -> Html {
             </section>
         </>
     }
+}
+
+struct Result {
+    user: String,
+    score: i8,
 }
