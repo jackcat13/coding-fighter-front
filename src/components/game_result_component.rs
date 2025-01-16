@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 
-use yew::{function_component, html, use_state, Html, Properties};
+use yew::{function_component, html, use_state, Callback, Html, Properties};
+use yew_router::hooks::use_navigator;
 
-use crate::client::game_client::GameClient;
+use crate::{client::game_client::GameClient, Route};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -11,9 +12,15 @@ pub struct Props {
 
 #[function_component(GameResultComponent)]
 pub fn game_result_component(props: &Props) -> Html {
+    let navigator = use_navigator().expect("Failed to load navigator");
     let game_id = &props.game_id;
     let answers = use_state(Vec::new);
     let answers_clone = answers.clone();
+    let on_click = {
+        Callback::from(move |_| {
+            navigator.push(&Route::Home);
+        })
+    };
     use_state(move || {
         let game_id = game_id.clone();
         let game_clone = answers_clone.clone();
@@ -50,6 +57,7 @@ pub fn game_result_component(props: &Props) -> Html {
                                 }
                             })}
                         </table>
+                        <button class={"w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center"} onclick={on_click}>{"Home"}</button>
                     </div>
                 </div>
             </section>
