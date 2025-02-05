@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use gloo::utils::window;
 use serde_json::to_string;
 use wasm_bindgen::closure::Closure;
@@ -168,6 +170,8 @@ pub fn join_game_component(props: &Props) -> Html {
             }
 
             let mut question_index = -1;
+            let es = Rc::new(EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap());
+            let es_closure = Rc::clone(&es);
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
                 let navigator = navigator.clone();
                 let game_id_string_async = game_id_string_async.clone();
@@ -183,13 +187,13 @@ pub fn join_game_component(props: &Props) -> Html {
                         }
                         game_progress_async.set(Some(progress));
                     } else if msg.eq(&String::from("END")) {
+                        es_closure.close();
                         navigator.push(&Route::GameResult {
                             id: game_id_string_async,
                         });
                     }
                 }
             }) as Box<dyn FnMut(MessageEvent)>);
-            let es = EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap();
             es.set_onmessage(Some(cb.as_ref().unchecked_ref()));
             cb.forget();
         });
