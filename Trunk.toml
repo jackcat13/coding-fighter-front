@@ -1,2 +1,8 @@
-# Default tailwindcss-cli version to download.
-tailwindcss = "3.3.5"
+[build]
+target = "index.html"
+dist = "dist"
+
+[[hooks]]
+stage = "build"
+command = "sh"
+command_arguments = ["-c", "npx tailwindcss-cli build styles/tailwind.css -o $TRUNK_STAGING_DIR/tailwind.css"]
