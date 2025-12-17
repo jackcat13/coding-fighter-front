@@ -4,12 +4,20 @@ use yew::{function_component, html, use_state, Callback, Html, Properties};
 use yew_router::hooks::use_navigator;
 
 use crate::{
-    client::game_client::GameClient, helpers::local_storage::resolve_simple_user_name, Route,
+    client::game_client::GameClient,
+    dto::answer::GameAnswerDto,
+    helpers::local_storage::{
+        self, local_storage, resolve_simple_user_name, resolve_user_from_storage,
+        resolve_user_object_from_storage,
+    },
+    Route,
 };
 
 const GOLD_TEXT: &str = "text-amber-400";
 const SILVER_TEXT: &str = "text-zinc-400";
 const BRONZE_TEXT: &str = "text-red-800";
+const GREEN_TEXT: &str = "text-green-600";
+const RED_TEXT: &str = "text-red-600";
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -19,6 +27,7 @@ pub struct Props {
 #[function_component(GameResultComponent)]
 pub fn game_result_component(props: &Props) -> Html {
     let navigator = use_navigator().expect("Failed to load navigator");
+    let local_storage = local_storage();
     let game_id = &props.game_id;
     let answers = use_state(Vec::new);
     let answers_clone = answers.clone();
@@ -38,6 +47,16 @@ pub fn game_result_component(props: &Props) -> Html {
     });
 
     let mut results: HashMap<String, i8> = HashMap::new();
+    let user_answers: Vec<GameAnswerDto> = answers
+        .clone()
+        .iter()
+        .filter(|answer| {
+            answer
+                .user
+                .contains(&resolve_user_object_from_storage(&local_storage))
+        })
+        .cloned()
+        .collect();
     answers.clone().iter().for_each(|answer| {
         if answer.correct_answer == answer.answer {
             if results.contains_key(&answer.user) {
@@ -63,9 +82,9 @@ pub fn game_result_component(props: &Props) -> Html {
         <>
             <section class="bg-sky-950 min-h-screen grid place-items-center flex flex-col">
                 <div class="flex flex-col bg-ct-dark-100 rounded-2xl p-8 space-y-5 text-sky-950">
-                    <h1>{format!("Game {}", game_id)}</h1>
+                    <h1 class="font-bold">{format!("Game {}", game_id)}</h1>
                     <div>
-                        <h2>{"Game result"}</h2>
+                        <h2 class="mb-5 font-semibold">{"Game result"}</h2>
                         // Display the results
                         <table>
                                 { for results.iter().map(|result| {
@@ -90,6 +109,25 @@ pub fn game_result_component(props: &Props) -> Html {
                                         <tr><td class={color}>{format!("{}. User: {} - Score: {}", processed_index, user, result.score)}</td></tr>
                                     }
                                 })}
+                        <h2 class="mt-5 mb-5 font-semibold">{"Questions / Answers :"}</h2>
+                        <div>
+                            { for user_answers.iter().map(|answer| {
+                                let color1 = resolve_answer_style(answer.clone(), 1);
+                                let color2 = resolve_answer_style(answer.clone(), 2);
+                                let color3 = resolve_answer_style(answer.clone(), 3);
+                                let color4 = resolve_answer_style(answer.clone(), 4);
+                                html! {
+                                    <>
+                                        <div class="font-medium">{format!("Topic : {}. Question : {}", answer.question.topic, answer.question.question_text)}</div>
+                                        <div class={color1}>{format!("1 - {}", answer.question.answer_1)}</div>
+                                        <div class={color2}>{format!("2 - {}", answer.question.answer_2)}</div>
+                                        <div class={color3}>{format!("3 - {}", answer.question.answer_3)}</div>
+                                        <div class={color4}>{format!("4 - {}", answer.question.answer_4)}</div>
+                                        <div class="mb-5">{format!("You answered {} and correct answer is {}", answer.answer, answer.correct_answer)}</div>
+                                    </>
+                                }
+                            })}
+                        </div>
                         </table>
                         <button class={"w-full py-3 bg-orange-600 text-white font-semibold rounded-lg outline-none border-none flex justify-center"} onclick={on_click}>{"Home"}</button>
                     </div>
@@ -97,6 +135,19 @@ pub fn game_result_component(props: &Props) -> Html {
             </section>
         </>
     }
+}
+
+fn resolve_answer_style(answer: GameAnswerDto, answer_number: i8) -> String {
+    let mut style = "".to_string();
+    if answer.correct_answer == answer_number {
+        style = style + GREEN_TEXT;
+    } else {
+        if answer.answer == answer_number {
+            style = style + RED_TEXT;
+        }
+    };
+    style = style + " ml-5 italic";
+    style
 }
 
 struct Result {

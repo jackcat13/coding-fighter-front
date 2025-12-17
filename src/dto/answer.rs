@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::dto::game_progress_dto::QuestionDto;
+
 ///AnswerDto is used to interact with the game frontend in the [GameResource](crate::resource::game_resource::GameResource)
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct GameAnswerDto {
@@ -8,4 +10,5 @@ pub struct GameAnswerDto {
     pub answer: i8,
     pub question_index: i8,
     pub correct_answer: i8,
+    pub question: QuestionDto,
 }

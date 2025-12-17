@@ -8,6 +8,14 @@ pub fn local_storage() -> web_sys::Storage {
     web_sys::window().unwrap().local_storage().unwrap().unwrap()
 }
 
+/// Get the full user object from the local storage
+pub fn resolve_user_object_from_storage(local_storage: &Storage) -> String {
+    return local_storage
+        .get_item(USER_SESSION)
+        .expect("Failed to load user from storage")
+        .expect("Failed to get user from option");
+}
+
 /// Get the user simple name from the local storage.
 pub fn resolve_user_from_storage(local_storage: &Storage) -> String {
     let user = local_storage

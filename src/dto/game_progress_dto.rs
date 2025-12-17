@@ -16,5 +16,6 @@ pub struct QuestionDto {
     pub answer_2: String,
     pub answer_3: String,
     pub answer_4: String,
+    pub topic: String,
     pub remaining_time: u64,
 }
