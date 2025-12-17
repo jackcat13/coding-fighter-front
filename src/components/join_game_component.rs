@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use gloo::utils::window;
@@ -12,12 +13,14 @@ use crate::client::game_client::GameClient;
 use crate::components::loading_button_component::LoadingButton;
 use crate::dto::game_dto::GameDto;
 use crate::dto::game_progress_dto::GameProgressDto;
-use crate::helpers::local_storage::local_storage;
+use crate::helpers::local_storage::{local_storage, resolve_user_object_from_storage};
 use crate::model::game::CURRENT_GAME;
 use crate::{Route, USER_SESSION};
 
 const QUESTION_BACKGROUND: &str = " bg-orange-600";
 const SELECTED_BACKGROUND: &str = " bg-orange-900";
+const NOT_STARTED: &str = "NOT STARTED";
+const END: &str = "END";
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -33,6 +36,7 @@ pub fn join_game_component(props: &Props) -> Html {
     let navigator = use_navigator().expect("Failed to load navigator");
     let location = window().location();
     let storage = local_storage();
+    let connected_user = resolve_user_object_from_storage(&storage);
     let game = use_state(|| None);
     let game_async = game.clone();
     let game_id_string = props.game_id.clone();
@@ -148,6 +152,8 @@ pub fn join_game_component(props: &Props) -> Html {
     let color_button_clone_2 = color_button_2.clone();
     let color_button_clone_3 = color_button_3.clone();
     let color_button_clone_4 = color_button_4.clone();
+    let users_connected = use_state(|| None);
+    let users_connected_async = users_connected.clone();
     use_state(move || {
         wasm_bindgen_futures::spawn_local(async move {
             let client = GameClient::init();
@@ -163,6 +169,11 @@ pub fn join_game_component(props: &Props) -> Html {
                         let start_button = is_start_button.clone();
                         start_button.set(true);
                     }
+                    if let Some(user) = user {
+                        client
+                            .save_users_in_game(game_id_string.clone(), user)
+                            .await;
+                    }
                     storage
                         .set_item(CURRENT_GAME, to_string(&game.clone()).unwrap().as_str())
                         .expect("Failed to store current game info");
@@ -170,13 +181,16 @@ pub fn join_game_component(props: &Props) -> Html {
             }
 
             let mut question_index = -1;
-            let es = Rc::new(EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap());
+            let es = Rc::new(
+                EventSource::new(&client.progress_events_souce_url(&game_id_string)).unwrap(),
+            );
             let es_closure = Rc::clone(&es);
             let cb = Closure::wrap(Box::new(move |event: MessageEvent| {
                 let navigator = navigator.clone();
                 let game_id_string_async = game_id_string_async.clone();
                 if let Some(msg) = event.data().as_string() {
-                    if !(msg.eq(&String::from("NOT STARTED")) || msg.eq(&String::from("END"))) {
+                    if !(msg.starts_with(&String::from(NOT_STARTED)) || msg.eq(&String::from(END)))
+                    {
                         let progress: GameProgressDto = serde_json::from_str(&msg).unwrap();
                         if progress.current_question != question_index {
                             color_button_clone.set(QUESTION_BACKGROUND);
@@ -186,7 +200,9 @@ pub fn join_game_component(props: &Props) -> Html {
                             question_index = progress.current_question;
                         }
                         game_progress_async.set(Some(progress));
-                    } else if msg.eq(&String::from("END")) {
+                    } else if msg.starts_with(NOT_STARTED) {
+                        users_connected_async.set(Some(msg[NOT_STARTED.len()..].to_string()));
+                    } else if msg.eq(&String::from(END)) {
                         es_closure.close();
                         navigator.push(&Route::GameResult {
                             id: game_id_string_async,
@@ -223,19 +239,23 @@ pub fn join_game_component(props: &Props) -> Html {
         html! {
             <>
                 <section class="bg-sky-950 min-h-screen w-full grid place-items-center flex flex-col">
-                    <form onsubmit={on_submit} >
-                        <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
-                            <h1 class="text-4xl xl:text-6xl text-center font-[600] text-orange-600 mb-4">
-                              {"Game : "}
-                            </h1>
-                            <div>
-                                {"Share following URL to invite players : "}
-                                {location.href().expect("Failed to resolve host")}
-                            </div>
-                            {game_info(&game.clone())}
-                            {render_start_button(*is_start_button_clone)}
+                    <div class="w-3/4 mx-auto bg-ct-dark-200 rounded-2xl p-8 space-y-5 text-sky-950">
+                        <form class="mb-5" onsubmit={on_submit} >
+                                <h1 class="text-4xl xl:text-6xl text-center font-[600] text-orange-600 mb-4">
+                                {"Game : "}
+                                </h1>
+                                <div>
+                                    {"Share following URL to invite players : "}
+                                    {location.href().expect("Failed to resolve host")}
+                                </div>
+                                {game_info(&game.clone())}
+                                {render_start_button(*is_start_button_clone)}
+                        </form>
+                        <div>
+                            <h2 class="font-semibold mb-5">{ "Connected players : "}</h2>
+                            <p style="white-space: pre-wrap;">{ &*users_connected.clone() }</p>
                         </div>
-                    </form>
+                    </div>
                 </section>
             </>
         }

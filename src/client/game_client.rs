@@ -117,6 +117,25 @@ impl GameClient {
         answers
     }
 
+    pub async fn save_users_in_game(&self, id: String, user: String) {
+        gloo::console::log!("Calling the client to register users in game");
+        let post_url = self
+            .url
+            .clone()
+            .add("/game/")
+            .add(id.as_str())
+            .add("/users/")
+            .add(user.as_str());
+        let client = reqwest::Client::new();
+        let res = client
+            .post(post_url)
+            .header(CONTENT_TYPE, APPLICATION_JSON)
+            .send()
+            .await;
+        let _ = res.expect("Failed to register users in game");
+        gloo::console::log!("Users should be registered");
+    }
+
     pub fn progress_events_souce_url(&self, id: &str) -> String {
         String::from(&self.url.clone().add("/game/").add(id).add("/progress"))
     }
