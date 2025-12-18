@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::rc::Rc;
 
 use gloo::utils::window;
@@ -13,7 +12,7 @@ use crate::client::game_client::GameClient;
 use crate::components::loading_button_component::LoadingButton;
 use crate::dto::game_dto::GameDto;
 use crate::dto::game_progress_dto::GameProgressDto;
-use crate::helpers::local_storage::{local_storage, resolve_user_object_from_storage};
+use crate::helpers::local_storage::local_storage;
 use crate::model::game::CURRENT_GAME;
 use crate::{Route, USER_SESSION};
 
@@ -36,7 +35,6 @@ pub fn join_game_component(props: &Props) -> Html {
     let navigator = use_navigator().expect("Failed to load navigator");
     let location = window().location();
     let storage = local_storage();
-    let connected_user = resolve_user_object_from_storage(&storage);
     let game = use_state(|| None);
     let game_async = game.clone();
     let game_id_string = props.game_id.clone();
@@ -200,8 +198,8 @@ pub fn join_game_component(props: &Props) -> Html {
                             question_index = progress.current_question;
                         }
                         game_progress_async.set(Some(progress));
-                    } else if msg.starts_with(NOT_STARTED) {
-                        users_connected_async.set(Some(msg[NOT_STARTED.len()..].to_string()));
+                    } else if let Some(users) = msg.strip_prefix(NOT_STARTED) {
+                        users_connected_async.set(Some(users.to_string()));
                     } else if msg.eq(&String::from(END)) {
                         es_closure.close();
                         navigator.push(&Route::GameResult {

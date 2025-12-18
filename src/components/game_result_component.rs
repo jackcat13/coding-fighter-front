@@ -7,8 +7,7 @@ use crate::{
     client::game_client::GameClient,
     dto::answer::GameAnswerDto,
     helpers::local_storage::{
-        self, local_storage, resolve_simple_user_name, resolve_user_from_storage,
-        resolve_user_object_from_storage,
+        local_storage, resolve_simple_user_name, resolve_user_object_from_storage,
     },
     Route,
 };
@@ -140,13 +139,11 @@ pub fn game_result_component(props: &Props) -> Html {
 fn resolve_answer_style(answer: GameAnswerDto, answer_number: i8) -> String {
     let mut style = "".to_string();
     if answer.correct_answer == answer_number {
-        style = style + GREEN_TEXT;
-    } else {
-        if answer.answer == answer_number {
-            style = style + RED_TEXT;
-        }
+        style += GREEN_TEXT;
+    } else if answer.answer == answer_number {
+        style += RED_TEXT;
     };
-    style = style + " ml-5 italic";
+    style += " ml-5 italic";
     style
 }
 

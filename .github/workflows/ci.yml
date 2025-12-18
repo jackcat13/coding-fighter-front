@@ -29,7 +29,7 @@ jobs:
           override: true
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
-          version: 'latest'
+          version: "latest"
       - run: wasm-pack test --node
 
   coverage:
@@ -42,10 +42,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/tarpaulin@v0.1
-        with:
-          version: '0.15.0'
-          args: '-- --test-threads 1'
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+      - name: Run tarpaulin
+        run: cargo tarpaulin --out Xml -- --test-threads 1
       - uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -81,3 +81,4 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
+
